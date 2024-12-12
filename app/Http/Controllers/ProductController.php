@@ -14,14 +14,24 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+        ]);
+    
         $product = Product::create($request->all());
         return response()->json($product, 201);
-    }
+    }    
 
     public function show($id)
     {
-        return Product::find($id);
-    }
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['message' => 'Producto no encontrado'], 404);
+        }
+        return response()->json($product, 200);
+    }    
 
     public function update(Request $request, $id)
     {
